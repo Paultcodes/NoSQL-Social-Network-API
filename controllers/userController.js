@@ -18,7 +18,9 @@ const userController = {
         path: 'Thought',
         select: '-__v',
       });
-      res.json(userData);
+      userData
+        ? res.json(userData)
+        : res.status(404).json({ message: 'No user found with this id' });
     } catch (err) {
       res.status(400).json(err);
     }
@@ -40,11 +42,9 @@ const userController = {
         new: true,
         runValidators: true,
       });
-      if (!userData) {
-        res.status(404).json({ message: 'No user found with this ID!' });
-        return;
-      }
-      res.json(userData);
+      userData
+        ? res.json(userData)
+        : res.status(404).json({ message: 'No user found with this id' });
     } catch (err) {
       res.status(400).json(err);
     }
@@ -53,11 +53,9 @@ const userController = {
   async deleteUser({ params }, res) {
     try {
       const userData = await User.findOneAndDelete({ _id: params.id });
-      if (!userData) {
-        res.status(404).json({ message: 'No user found with this ID!' });
-        return;
-      }
-      res.json(userData);
+      userData
+        ? res.json(userData)
+        : res.status(404).json({ message: 'No user found with this id' });
     } catch (err) {
       res.status(400).json(err);
     }
@@ -70,10 +68,9 @@ const userController = {
         { $push: { friends: req.body.friendId } },
         { new: true }
       );
-      if (!user) {
-        return res.status(404).json({ message: 'No user found with this ID!' });
-      }
-      res.json(user);
+      user
+        ? res.json(user)
+        : res.status(404).json({ message: 'No user found with this id' });
     } catch (err) {
       res.status(400).json(err);
     }
@@ -86,10 +83,9 @@ const userController = {
         { $pull: { friends: req.body.friendId } },
         { new: true }
       );
-      if (!user) {
-        return res.status(404).json({ message: 'No user found with this ID!' });
-      }
-      res.json(user);
+      user
+        ? res.json(user)
+        : res.status(404).json({ message: 'No user found with this id' });
     } catch (err) {
       res.status(400).json(err);
     }
