@@ -1,4 +1,5 @@
 const { Schema, Types, default: mongoose, model } = require('mongoose');
+const moment = require('moment');
 
 const thoughtSchema = new Schema({
   thoughtText: {
