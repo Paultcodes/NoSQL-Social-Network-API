@@ -1,4 +1,5 @@
 const { Thought, User } = require('../models');
+const { findOneAndUpdate } = require('../models/Thought');
 
 const thoughtController = {
   async getThoughts(req, res) {
@@ -60,6 +61,41 @@ const thoughtController = {
       thoughtData
         ? res.json(thoughtData)
         : res.status(404).json({ message: 'No thought found with this id' });
-    } catch (err) {}
+    } catch (err) {
+      res.status(400).json(err);
+    }
+  },
+
+  async addReaction({ params, body }, res) {
+    try {
+      const thoughtData = await Thought.findOneAndUpdate(
+        { _id: params.id },
+        { $push: { reactions: body.reaction } },
+        { new: true }
+      );
+
+      thoughtData
+        ? res.json(thoughtData)
+        : res.status(404).json({ message: 'No thought found with this id' });
+    } catch (err) {
+      res.status(400).json(err);
+    }
+  },
+
+  async deleteReaction({ params, body }, res) {
+    try {
+      const thoughtData = await findOneAndUpdate(
+        { _id: params.id },
+        { $pull: { reactions: body.reactionId } },
+        { new: true }
+      );
+      thoughtData
+        ? res.json(thoughtData)
+        : res.status(404).json({ message: 'No thought found with this id' });
+    } catch (err) {
+      res.status(400).json(err);
+    }
   },
 };
+
+module.exports = thoughtController;
