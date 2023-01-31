@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 const userController = {
   //!Get all users
@@ -14,15 +14,22 @@ const userController = {
   //!Find user by ID
   async getUserByID({ params }, res) {
     try {
-      const userData = await User.findOne({ _id: params.id }).populate({
-        path: 'Thought',
-        select: '-__v',
-      });
+      const userData = await User.findOne({ _id: params.userId }).populate([
+        {
+          path: 'thoughts',
+          select: '-__v',
+        },
+        {
+          path: 'friends',
+          select: '-__v',
+        },
+      ]);
       userData
         ? res.json(userData)
         : res.status(404).json({ message: 'No user found with this id' });
     } catch (err) {
       res.status(400).json(err);
+      console.log(err);
     }
   },
   //!Create a new user
@@ -38,10 +45,14 @@ const userController = {
   //!Update user
   async updateUser({ params, body }, res) {
     try {
-      const userData = await User.findOneAndUpdate({ _id: params.id }, body, {
-        new: true,
-        runValidators: true,
-      });
+      const userData = await User.findOneAndUpdate(
+        { _id: params.userId },
+        body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
       userData
         ? res.json(userData)
         : res.status(404).json({ message: 'No user found with this id' });
@@ -52,9 +63,9 @@ const userController = {
   //!Delete User
   async deleteUser({ params }, res) {
     try {
-      const userData = await User.findOneAndDelete({ _id: params.id });
+      const userData = await User.findOneAndDelete({ _id: params.userId });
       userData
-        ? res.json(userData)
+        ? res.json({ message: 'User Deleted!' })
         : res.status(404).json({ message: 'No user found with this id' });
     } catch (err) {
       res.status(400).json(err);
@@ -64,7 +75,7 @@ const userController = {
   async addFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
-        { _id: req.params.id },
+        { _id: req.params.userId },
         { $push: { friends: req.params.friendId } },
         { new: true }
       );

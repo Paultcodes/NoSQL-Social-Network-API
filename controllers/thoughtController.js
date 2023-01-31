@@ -1,7 +1,5 @@
 const { Thought, User } = require('../models');
 
-
-
 const thoughtController = {
   async getThoughts(req, res) {
     try {
@@ -29,7 +27,7 @@ const thoughtController = {
       const thoughtData = await Thought.create(body);
       await User.findOneAndUpdate(
         { _id: body.userId },
-        { $push: { thoughts: thoughtData.userId } },
+        { $push: { thoughts: thoughtData._id } },
         { new: true }
       );
       res.json(thoughtData);
@@ -58,13 +56,15 @@ const thoughtController = {
 
   async deleteThought({ params }, res) {
     try {
-      const thoughtData = await Thought.findOneAndDelete({ _id: params.thoughtId });
+      const thoughtData = await Thought.findOneAndDelete({
+        _id: params.thoughtId,
+      });
       thoughtData
-        ? res.json({message: 'Thought Deleted!'})
+        ? res.json({ message: 'Thought Deleted!' })
         : res.status(404).json({ message: 'No thought found with this id' });
     } catch (err) {
       res.status(400).json(err);
-      console.log(err)
+      console.log(err);
     }
   },
 
@@ -92,7 +92,7 @@ const thoughtController = {
         { new: true }
       );
       thoughtData
-        ? res.json({message: 'Reaction deleted'})
+        ? res.json({ message: 'Reaction deleted' })
         : res.status(404).json({ message: 'No thought found with this id' });
     } catch (err) {
       res.status(400).json(err);
