@@ -10,10 +10,8 @@ const reactionSchema = new Schema(
     reactionBody: {
       type: String,
       required: true,
-      validate: [
-        validator.isLength({ max: 280 }),
-        'Reaction text must be less than 280 characters.',
-      ],
+      minLength: 1,
+      maxLength: 250,
     },
     username: {
       type: String,
