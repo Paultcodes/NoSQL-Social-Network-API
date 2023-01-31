@@ -20,6 +20,6 @@ router.route('/updateUser/:userId').put(updateUser);
 
 router.route('/:userId/friends/:friendId').put(addFriend);
 
-router.route('/delete/:userId/friends/:friendId').delete(removeFriend);
+router.route('/delete/:userId/friends/:friendId').put(removeFriend);
 
 module.exports = router;
