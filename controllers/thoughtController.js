@@ -27,12 +27,12 @@ const thoughtController = {
   async addThought({ body }, res) {
     try {
       const thoughtData = await Thought.create(body);
-      const userData = await User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { _id: body.userId },
         { $push: { thoughts: thoughtData.userId } },
         { new: true }
       );
-      res.json(userData);
+      res.json(thoughtData);
     } catch (err) {
       res.status(400).json(err);
     }
@@ -87,12 +87,12 @@ const thoughtController = {
   async deleteReaction({ params, body }, res) {
     try {
       const thoughtData = await Thought.findOneAndUpdate(
-        { _id: params.id },
-        { $pull: { reactions: body.reactionId } },
+        { _id: params.thoughtId },
+        { $pull: { reactions: body } },
         { new: true }
       );
       thoughtData
-        ? res.json(thoughtData)
+        ? res.json({message: 'Reaction deleted'})
         : res.status(404).json({ message: 'No thought found with this id' });
     } catch (err) {
       res.status(400).json(err);
